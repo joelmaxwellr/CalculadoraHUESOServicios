@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Hueso Print</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hueso Print / Hueso Jeans</h1>
+            <p>Calculadora de Cotizaciones Interna</p>
+            <div id="firebase-status" style="display:none; padding:12px; margin-top:12px; border:1px solid #d9534f; border-radius:6px; background:#f8d7da; color:#721c24; font-size:0.95rem;"></div>
+        </header>
+
+        <div class="material-selector">
+            <label for="material-select">Material:</label>
+            <input type="text" id="material-select-buscar" placeholder="Buscar material..." oninput="filtrarSelect('material-select', this.value)">
+            <select id="material-select" onchange="openTab(this.value)">
+                <option value="dtf" selected>DTF Textil</option>
+                <option value="lapiceros">Lapiceros</option>
+                <option value="calandra">Calandra</option>
+                <option value="uvdtf">UV-DTF</option>
+                <option value="uv-directo">UV Directo Cama Plana</option>
+                <option value="corte">Corte Laser/CNC</option>
+                <option value="material-generico">Material por pie cuadrado</option>
+            </select>
+        </div>
+
+        <!-- DTF TEXTIL -->
+        <section id="dtf" class="tab-content active">
+            <h2>Cotizacion DTF Textil (Cod. 375375)</h2>
+            <div class="input-group">
+                <label>Largo (Pulgadas):</label>
+                <input type="number" id="dtf-largo" placeholder="Ej: 24" onkeypress="if(event.key==='Enter') calcularDTF()">
+                <label>Ancho (Pulgadas - Max 22"):</label>
+                <input type="number" id="dtf-ancho" value="22" onkeypress="if(event.key==='Enter') calcularDTF()">
+                <label>Cantidad:</label>
+                <input type="number" id="dtf-cant" value="1" onkeypress="if(event.key==='Enter') calcularDTF()">
+            </div>
+            <button onclick="calcularDTF()">Calcular DTF</button>
+            <div id="res-dtf" class="result"></div>
+        </section>
+
+        <!-- LAPICEROS -->
+        <section id="lapiceros" class="tab-content">
+            <h2>Impresion de Lapiceros / Boligrafos</h2>
+            <div class="input-group">
+                <label>Cantidad de Unidades:</label>
+                <input type="number" id="lap-cant" placeholder="Ej: 150" onkeypress="if(event.key==='Enter') calcularLapiceros()">
+            </div>
+            <button onclick="calcularLapiceros()">Calcular Lapiceros</button>
+            <div id="res-lap" class="result"></div>
+        </section>
+
+        <!-- CALANDRA -->
+        <section id="calandra" class="tab-content">
+            <h2>Cotizacion Calandra</h2>
+            <div class="input-group">
+                <label>Ancho (Pulgadas):</label>
+                <input type="number" id="calandra-ancho" placeholder="Ej: 24" step="0.01" onkeypress="if(event.key==='Enter') calcularCalandra()">
+                <label>Alto (Pulgadas):</label>
+                <input type="number" id="calandra-alto" placeholder="Ej: 36" step="0.01" onkeypress="if(event.key==='Enter') calcularCalandra()">
+                <label>Cantidad:</label>
+                <input type="number" id="calandra-cant" value="1" onkeypress="if(event.key==='Enter') calcularCalandra()">
+            </div>
+            <button onclick="calcularCalandra()">Calcular Calandra</button>
+            <div id="res-calandra" class="result"></div>
+        </section>
+
+        <!-- UV-DTF PERSONALIZADO -->
+        <section id="uvdtf" class="tab-content">
+            <h2>Cotizacion UV-DTF Personalizada</h2>
+            <div class="input-group">
+                <label>Ancho de la pieza (Pulgadas):</label>
+                <input type="number" id="uv-ancho" placeholder="Ej: 5" onkeypress="if(event.key==='Enter') calcularUVPersonalizado()">
+                
+                <label>Alto de la pieza (Pulgadas):</label>
+                <input type="number" id="uv-alto" placeholder="Ej: 3" onkeypress="if(event.key==='Enter') calcularUVPersonalizado()">
+                
+                <label>Cantidad de piezas:</label>
+                <input type="number" id="uv-cant" value="1" onkeypress="if(event.key==='Enter') calcularUVPersonalizado()">
+            </div>
+            <button onclick="calcularUVPersonalizado()">Calcular UV-DTF</button>
+            <div id="res-uv-custom" class="result"></div>
+        </section>
+
+        <!-- UV DIRECTO CAMA PLANA -->
+        <section id="uv-directo" class="tab-content">
+            <h2>Cotizacion UV Directo Cama Plana</h2>
+            <div class="input-group">
+                <label>Ancho (Pulgadas):</label>
+                <input type="number" id="uv-directo-ancho" placeholder="Ej: 8" step="0.01" onkeypress="if(event.key==='Enter') calcularUVDirecto()">
+                
+                <label>Alto (Pulgadas):</label>
+                <input type="number" id="uv-directo-alto" placeholder="Ej: 11" step="0.01" onkeypress="if(event.key==='Enter') calcularUVDirecto()">
+                
+                <label>Cantidad:</label>
+                <input type="number" id="uv-directo-cant" value="1" onkeypress="if(event.key==='Enter') calcularUVDirecto()">
+                
+                <label>Doble cara:</label>
+                <input type="checkbox" id="uv-directo-doble-cara">
+                
+                <label>Tipo (Piezas grandes):</label>
+                <select id="uv-directo-tipo">
+                    <option value="blanco">Blanco</option>
+                    <option value="cmyk">CMYK</option>
+                    <option value="sintra">Sintra</option>
+                </select>
+            </div>
+            <button onclick="calcularUVDirecto()">Calcular UV Directo</button>
+            <div id="res-uv-directo" class="result"></div>
+        </section>
+
+        <!-- MATERIAL POR PIE CUADRADO -->
+        <section id="material-generico" class="tab-content">
+            <h2>Cotizacion de Material</h2>
+            <div class="material-calculator-main">
+                <div>
+                    <div class="input-group">
+                        <label>Nombre del material:</label>
+                        <input type="text" id="material-seleccionado-nombre" placeholder="Ej: Foamboard 5mm" onchange="actualizarMaterialGeneralSeleccionado()">
+                        <label>Costo por pie cuadrado (RD$):</label>
+                        <input type="number" id="material-seleccionado-costo" step="0.01" readonly>
+                        <label>Costo minimo (RD$):</label>
+                        <input type="number" id="material-seleccionado-minimo" step="0.01" value="0" readonly>
+                        <label>Ancho de la pieza (Pulgadas):</label>
+                        <input type="number" id="material-ancho" placeholder="Ej: 12" step="0.01" onkeypress="if(event.key==='Enter') calcularMaterialGeneral()">
+                        <label>Alto de la pieza (Pulgadas):</label>
+                        <input type="number" id="material-alto" placeholder="Ej: 18" step="0.01" onkeypress="if(event.key==='Enter') calcularMaterialGeneral()">
+                        <label>Margen opcional para ancho y alto (Pulgadas):</label>
+                        <input type="number" id="material-margen" value="0" step="0.01" onkeypress="if(event.key==='Enter') calcularMaterialGeneral()">
+                        <label>Cantidad de piezas:</label>
+                        <input type="number" id="material-cant" value="1" onkeypress="if(event.key==='Enter') calcularMaterialGeneral()">
+                    </div>
+                    <button onclick="calcularMaterialGeneral()">Calcular Material</button>
+                </div>
+                <aside class="cost-sidebar">
+                    <h3>Costo</h3>
+                    <div id="res-material-generico" class="result side-result">
+                        Seleccione un material y calcule para ver el total.
+                    </div>
+                </aside>
+                </div>
+
+            <div class="material-admin config-section">
+                <h3>Configuracion de materiales</h3>
+                <div class="table-wrap">
+                    <table class="materials-table">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>RD$ / pie2</th>
+                                <th>Minimo</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" id="material-nombre" placeholder="Ej: Foamboard 5mm"></td>
+                                <td><input type="number" id="material-costo-pie" placeholder="185" step="0.01"></td>
+                                <td><input type="number" id="material-costo-minimo" placeholder="250" step="0.01" value="0"></td>
+                                <td><button type="button" class="table-btn" onclick="guardarMaterialGeneral()">Crear</button></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <label for="material-codigo-verificacion">Código de verificación:</label>
+                                    <input type="password" id="material-codigo-verificacion" placeholder="" autocomplete="off">
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody id="materiales-config-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- CORTE LASER/CNC -->
+        <section id="corte" class="tab-content">
+            <h2>Calculadora de Corte (Acrilico/Sintra/ACM)</h2>
+            <div class="material-admin">
+                <h3>Materiales de corte</h3>
+                <div class="input-group">
+                    <label>Nuevo material:</label>
+                    <input type="text" id="nuevo-material-nombre" placeholder="Ej: PVC 3mm">
+                    <label>Costo por pie cuadrado (RD$):</label>
+                    <input type="number" id="nuevo-material-costo" placeholder="Ej: 185" step="0.01">
+                    <label>Código de verificación:</label>
+                    <input type="password" id="corte-codigo-verificacion" placeholder="" autocomplete="off">
+                    <button type="button" class="secondary-btn" onclick="guardarMaterialCorte()">Agregar / Actualizar Material</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Material:</label>
+                <input type="text" id="corte-material-buscar" placeholder="Buscar material de corte..." oninput="filtrarSelect('corte-material', this.value)">
+                <select id="corte-material" onchange="mostrarCostoMaterialSeleccionado()"></select>
+                <label>Costo del material seleccionado (RD$ / pie2):</label>
+                <input type="number" id="corte-costo-pie" step="0.01" onchange="actualizarCostoMaterialSeleccionado()">
+                <label>Grosor (mm):</label>
+                <input type="number" id="corte-grosor" value="3" step="0.1" onkeypress="if(event.key==='Enter') calcularCorte()">
+                <label>Ancho Pieza (Pulg):</label>
+                <input type="number" id="corte-ancho" placeholder="Ej: 2.5" onkeypress="if(event.key==='Enter') calcularCorte()">
+                <label>Alto Pieza (Pulg):</label>
+                <input type="number" id="corte-alto" placeholder="Ej: 5" onkeypress="if(event.key==='Enter') calcularCorte()">
+                <label>Cantidad de Piezas:</label>
+                <input type="number" id="corte-cant" value="1" onkeypress="if(event.key==='Enter') calcularCorte()">
+                <label>Agujeros por pieza:</label>
+                <input type="number" id="corte-agujeros" value="0" onkeypress="if(event.key==='Enter') calcularCorte()">
+            </div>
+            <button onclick="calcularCorte()">Calcular Costo de Corte</button>
+            <div id="res-corte" class="result"></div>
+        </section>
+
+        <footer>
+            <p>Precision Hueso Print - Todos los precios en RD$</p>
+        </footer>
+    </div>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+      import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDFZBPmzTNC1X91COqW-2WdJu-v2nkHnOM",
+        authDomain: "sample-firebase-ai-app-6fc9b.firebaseapp.com",
+        projectId: "sample-firebase-ai-app-6fc9b",
+        storageBucket: "sample-firebase-ai-app-6fc9b.firebasestorage.app",
+        messagingSenderId: "814324701358",
+        appId: "1:814324701358:web:bcab62040eb32d1473b53f",
+        measurementId: "G-PSH47X2W81"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      try {
+        getAnalytics(app);
+      } catch (error) {
+        console.warn("Firebase Analytics no disponible:", error);
+      }
+
+      const db = getFirestore(app);
+
+      window.firebaseSaveMaterial = async function (tipo, material) {
+        if (!db || !material?.id) return;
+        const collectionName = tipo === 'corte' ? 'materialesCorte' : 'materialesGenerales';
+        await setDoc(doc(db, collectionName, material.id), material);
+      };
+
+      window.firebaseLoadMaterials = async function (tipo) {
+        if (!db) return [];
+        const collectionName = tipo === 'corte' ? 'materialesCorte' : 'materialesGenerales';
+        const snapshot = await getDocs(collection(db, collectionName));
+        const lista = [];
+        snapshot.forEach(docSnap => lista.push({ id: docSnap.id, ...docSnap.data() }));
+        return lista;
+      };
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
