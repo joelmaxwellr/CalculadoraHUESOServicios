@@ -106,6 +106,79 @@ function guardarMaterialesGenerales(materiales) {
     materialesGeneralesCache = materiales;
 }
 
+function exportarMaterialesGeneralesJson() {
+    const materiales = obtenerMaterialesGenerales();
+    const payload = { materiales: materiales.map(({ id, nombre, costoPie, costoMinimo }) => ({ id, nombre, costoPie, costoMinimo })) };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'materiales-generales.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+function triggerMaterialJsonUpload() {
+    const fileInput = document.getElementById('material-json-file-input');
+    if (fileInput) {
+        fileInput.value = '';
+        fileInput.click();
+    }
+}
+
+function importarMaterialesGeneralesJson(event) {
+    const file = event.target?.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        try {
+            const contenido = reader.result;
+            const datos = JSON.parse(contenido);
+            cargarMaterialesGeneralesDesdeJson(datos);
+        } catch (error) {
+            alert('Archivo JSON no válido. Revisa el formato e inténtalo nuevamente.');
+            console.error('Error importando JSON de materiales:', error);
+        }
+    };
+    reader.readAsText(file, 'UTF-8');
+}
+
+function cargarMaterialesGeneralesDesdeJson(datos) {
+    let materiales = [];
+    if (Array.isArray(datos)) {
+        materiales = datos;
+    } else if (Array.isArray(datos.materiales)) {
+        materiales = datos.materiales;
+    } else {
+        return alert('JSON inválido: debe contener un arreglo de materiales o { materiales: [...] }.');
+    }
+
+    const validos = materiales.reduce((acc, item) => {
+        const nombre = String(item.nombre || item.name || '').trim();
+        const costoPie = parseFloat(item.costoPie ?? item.costo ?? item.price ?? '');
+        const costoMinimo = parseFloat(item.costoMinimo ?? item.minimo ?? item.minimum ?? 0) || 0;
+        if (!nombre || isNaN(costoPie) || costoPie < 0) return acc;
+
+        const id = normalizarIdMaterial(item.id ? String(item.id) : nombre);
+        acc[id] = { id, nombre, costoPie, costoMinimo };
+        return acc;
+    }, {});
+
+    const lista = Object.values(validos);
+    if (!lista.length) {
+        return alert('No se encontraron materiales válidos en el JSON.');
+    }
+
+    guardarMaterialesGenerales(lista);
+    cargarMaterialesGenerales();
+
+    lista.forEach(material => guardarMaterialesEnFirebase('generales', material));
+    alert(`Se importaron ${lista.length} material(es) correctamente.`);
+}
+
 function cargarMaterialesGenerales() {
     const select = document.getElementById('material-select');
     if (!select) return;
@@ -527,12 +600,19 @@ function calcularMaterialGeneral() {
 
 // 1. CALCULO DTF TEXTIL
 function calcularDTF() {
-    const alto = parseFloat(document.getElementById('dtf-largo').value);
-    const ancho = parseFloat(document.getElementById('dtf-ancho').value);
+    let alto = parseFloat(document.getElementById('dtf-largo').value);
+    let ancho = parseFloat(document.getElementById('dtf-ancho').value);
     const cantidad = parseInt(document.getElementById('dtf-cant').value);
 
     if (!ancho || !alto || !cantidad) {
         return alert("Por favor ingresa ancho, largo y cantidad.");
+    }
+
+    // Si el ancho es menor a 22 pulgadas, asumir que tiene 22
+    // EXCEPTO si tiene 11 pulgadas o menos, o si el área es 93.5 pulgadas cuadradas o menos
+    const area = ancho * alto;
+    if (ancho < 22 && ancho > 11 && area > 93.5) {
+        ancho = 22;
     }
 
     if (alto > 22 && ancho > 22) {
@@ -782,5 +862,37 @@ function calcularUVDirecto() {
         Doble cara: ${dobleCara ? 'Sí' : 'No'}<br>
         Precio unitario: RD$ ${precioUnitario ? precioUnitario.toFixed(2) : 'Calculado'}<br>
         <span class="res-total">Total: RD$ ${total.toFixed(2)}</span>
+    `;
+}
+
+// 6. CALCULO SUBLIMACIÓN
+function calcularSublimacion() {
+    const largo = parseFloat(document.getElementById('sublimacion-largo').value);
+    const cantidad = parseInt(document.getElementById('sublimacion-cant').value);
+
+    if (!largo || !cantidad) {
+        return alert("Por favor ingresa largo y cantidad.");
+    }
+
+    // Ancho siempre 60"
+    const ancho = 60;
+    const yardas = (largo / 36) * cantidad;
+    let total = yardas * 280;
+
+    // Precio mínimo RD$75
+    if (total < 75) {
+        total = 75;
+    }
+
+    total = redondear5(total);
+
+    document.getElementById('res-sublimacion').innerHTML = `
+        0000000<br>
+        <strong>Producto: Sublimación (Impresión)</strong><br>
+        Medidas: ${ancho}" x ${largo}" | Cantidad: ${cantidad}<br>
+        Yardas calculadas: ${yardas.toFixed(2)}<br>
+        Precio por yarda: RD$ 280<br>
+        Precio mínimo: RD$ 75<br>
+        <span class="res-total">Total: RD$ ${total}</span>
     `;
 }

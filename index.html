@@ -23,6 +23,7 @@
                 <option value="calandra">Calandra</option>
                 <option value="uvdtf">UV-DTF</option>
                 <option value="uv-directo">UV Directo Cama Plana</option>
+                <option value="sublimacion">Sublimación</option>
                 <option value="corte">Corte Laser/CNC</option>
                 <option value="material-generico">Material por pie cuadrado</option>
             </select>
@@ -113,6 +114,19 @@
             <div id="res-uv-directo" class="result"></div>
         </section>
 
+        <!-- SUBLIMACIÓN -->
+        <section id="sublimacion" class="tab-content">
+            <h2>Cotizacion Sublimación (Impresión)</h2>
+            <div class="input-group">
+                <label>Largo (Pulgadas):</label>
+                <input type="number" id="sublimacion-largo" placeholder="Ej: 36" onkeypress="if(event.key==='Enter') calcularSublimacion()">
+                <label>Cantidad:</label>
+                <input type="number" id="sublimacion-cant" value="1" onkeypress="if(event.key==='Enter') calcularSublimacion()">
+            </div>
+            <button onclick="calcularSublimacion()">Calcular Sublimación</button>
+            <div id="res-sublimacion" class="result"></div>
+        </section>
+
         <!-- MATERIAL POR PIE CUADRADO -->
         <section id="material-generico" class="tab-content">
             <h2>Cotizacion de Material</h2>
@@ -143,6 +157,13 @@
                     </div>
                 </aside>
                 </div>
+
+            <div class="json-tools">
+                <h3>Importar / Exportar materiales</h3>
+                <button type="button" class="table-btn" onclick="exportarMaterialesGeneralesJson()">Descargar JSON</button>
+                <button type="button" class="table-btn" onclick="triggerMaterialJsonUpload()">Cargar JSON</button>
+                <input type="file" id="material-json-file-input" accept=".json,application/json" style="display:none" onchange="importarMaterialesGeneralesJson(event)">
+            </div>
 
             <div class="material-admin config-section">
                 <h3>Configuracion de materiales</h3>
