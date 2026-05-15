@@ -42,7 +42,7 @@ function obtenerOpcionesSelect(select) {
     return JSON.parse(select.dataset.opcionesOriginales || '[]');
 }
 
-function filtrarSelect(selectId, busqueda) {
+function filtrarSelect(selectId, busqueda, suggestionsId = '', inputText = '') {
     const select = document.getElementById(selectId);
     if (!select) return;
 
@@ -62,12 +62,83 @@ function filtrarSelect(selectId, busqueda) {
         select.appendChild(option);
     });
 
+    if (suggestionsId) {
+        mostrarSugerencias(selectId, suggestionsId, filtradas);
+    }
+
     if (filtradas.some(option => option.value === valorActual)) {
         select.value = valorActual;
     } else if (filtradas.length) {
         select.selectedIndex = 0;
     }
+
+    const exactMatchText = inputText.trim().toLowerCase();
+    if (exactMatchText) {
+        const matched = filtradas.find(option => option.text.toLowerCase() === exactMatchText);
+        if (matched) {
+            select.value = matched.value;
+        }
+    }
+
+    if (select.options.length) {
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
 }
+
+function mostrarSugerencias(selectId, suggestionsId, options) {
+    const suggestionsContainer = document.getElementById(suggestionsId);
+    if (!suggestionsContainer) return;
+
+    suggestionsContainer.innerHTML = '';
+    if (!options.length) {
+        suggestionsContainer.style.display = 'none';
+        return;
+    }
+
+    options.slice(0, 8).forEach(optionData => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-suggestion';
+        item.textContent = optionData.text;
+        item.onclick = () => seleccionarSugerencia(selectId, optionData.value, optionData.text, `${selectId}-buscar`, suggestionsId);
+        suggestionsContainer.appendChild(item);
+    });
+    suggestionsContainer.style.display = 'block';
+}
+
+function seleccionarSugerencia(selectId, optionValue, suggestionText, inputId, suggestionsId) {
+    const select = document.getElementById(selectId);
+    const input = document.getElementById(inputId);
+    const suggestionsContainer = document.getElementById(suggestionsId);
+    if (select) {
+        select.value = optionValue;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    if (input) {
+        input.value = suggestionText;
+    }
+    if (suggestionsContainer) {
+        suggestionsContainer.style.display = 'none';
+    }
+}
+
+function seleccionarOpcionSelectPorTexto(selectId, texto) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+
+    const match = [...select.options].find(option => option.textContent.trim().toLowerCase() === texto.trim().toLowerCase());
+    if (match) {
+        select.value = match.value;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+}
+
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('.autocomplete-wrapper')) {
+        document.querySelectorAll('.autocomplete-suggestions').forEach(el => {
+            el.style.display = 'none';
+        });
+    }
+});
 
 const MATERIALES_CORTE_DEFAULT = [
     { id: 'laser', nombre: 'Acrilico (Laser)', costoPie: 0, tipo: 'laser' },

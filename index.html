@@ -16,7 +16,10 @@
 
         <div class="material-selector">
             <label for="material-select">Material:</label>
-            <input type="text" id="material-select-buscar" placeholder="Buscar material..." oninput="filtrarSelect('material-select', this.value)">
+            <div class="autocomplete-wrapper">
+                <input type="text" id="material-select-buscar" placeholder="Buscar material..." oninput="filtrarSelect('material-select', this.value, 'material-suggestions', this.value)" onchange="seleccionarOpcionSelectPorTexto('material-select', this.value)">
+                <div id="material-suggestions" class="autocomplete-suggestions"></div>
+            </div>
             <select id="material-select" onchange="openTab(this.value)">
                 <option value="dtf" selected>DTF Textil</option>
                 <option value="lapiceros">Lapiceros</option>
@@ -214,7 +217,10 @@
             </div>
             <div class="input-group">
                 <label>Material:</label>
-                <input type="text" id="corte-material-buscar" placeholder="Buscar material de corte..." oninput="filtrarSelect('corte-material', this.value)">
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="corte-material-buscar" placeholder="Buscar material de corte..." oninput="filtrarSelect('corte-material', this.value, 'corte-suggestions', this.value)" onchange="seleccionarOpcionSelectPorTexto('corte-material', this.value)">
+                    <div id="corte-suggestions" class="autocomplete-suggestions"></div>
+                </div>
                 <select id="corte-material" onchange="mostrarCostoMaterialSeleccionado()"></select>
                 <label>Costo del material seleccionado (RD$ / pie2):</label>
                 <input type="number" id="corte-costo-pie" step="0.01" onchange="actualizarCostoMaterialSeleccionado()">
