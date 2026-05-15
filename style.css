@@ -55,6 +55,26 @@ h1 { color: var(--primary); margin-bottom: 5px; }
 }
 .materials-table th { color: var(--primary); font-size: 0.9em; }
 .materials-table input { width: 100%; box-sizing: border-box; padding: 10px; }
+
+/* Numeric inputs in the materials configuration table sized to show ~4 digits
+   The text input will occupy the remaining width in the table cell */
+.materials-table input[type="number"] {
+    /* 4 characters (digits) + padding/border compensation */
+    width: calc(4ch + 28px);
+    /* allow a bit larger on wide displays but keep a sensible cap */
+    max-width: 200px;
+    /* ensure minimum can display four digits */
+    min-width: calc(4ch + 12px);
+    box-sizing: border-box;
+}
+.materials-table input[type="text"] {
+    /* Ensure the material name field can display long names (≈56 characters)
+       while still using remaining space in the cell. */
+    /* subtract the full numeric width so text gets remaining space */
+    width: calc(100% - (4ch + 28px));
+    min-width: 56ch;
+    box-sizing: border-box;
+}
 .table-actions { display: flex; gap: 6px; }
 .table-btn {
     width: auto;
