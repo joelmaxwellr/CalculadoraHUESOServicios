@@ -16,9 +16,25 @@ function openTab(tabId) {
     }
 }
 
-// Redondeo al multiplo de 5 mas cercano
+// Redondeo al múltiplo de 5 hacia arriba
 function redondear5(valor) {
-    return Math.round(valor / 5) * 5;
+    return Math.ceil(valor / 5) * 5;
+}
+
+function formatNumber(valor, maxDecimals = 2) {
+    if (valor === null || valor === undefined || isNaN(valor)) return '';
+    const numero = Number(valor);
+    const opciones = { maximumFractionDigits: maxDecimals };
+    if (Number.isInteger(numero)) {
+        opciones.minimumFractionDigits = 0;
+    } else {
+        opciones.minimumFractionDigits = 2;
+    }
+    return numero.toLocaleString('en-US', opciones);
+}
+
+function formatCurrency(valor) {
+    return `RD$ ${formatNumber(valor, 2)}`;
 }
 
 function prepararSelectBuscable(select) {
@@ -360,14 +376,18 @@ function mostrarMaterialGeneralSeleccionado(idMaterial) {
     const nombreInput = document.getElementById('material-seleccionado-nombre');
     const costoInput = document.getElementById('material-seleccionado-costo');
     const minimoInput = document.getElementById('material-seleccionado-minimo');
+    const costoText = document.getElementById('material-seleccionado-costo-text');
+    const minimoText = document.getElementById('material-seleccionado-minimo-text');
     const editorSelect = document.getElementById('material-guardado-select');
     const resultado = document.getElementById('res-material-generico');
 
-    if (!nombreInput || !costoInput || !minimoInput) return;
+    if (!nombreInput || !costoInput || !minimoInput || !costoText || !minimoText) return;
 
     nombreInput.value = material ? material.nombre : '';
     costoInput.value = material ? material.costoPie : '';
     minimoInput.value = material ? (material.costoMinimo || 0) : 0;
+    costoText.textContent = material ? `RD$ ${material.costoPie.toFixed(2)}` : 'N/A';
+    minimoText.textContent = material ? `RD$ ${ (material.costoMinimo || 0).toFixed(2)}` : 'N/A';
 
     if (editorSelect && material) {
         editorSelect.value = material.id;
@@ -656,16 +676,20 @@ function calcularMaterialGeneral() {
     const nombreMaterial = material ? material.nombre : nombreManual;
 
     document.getElementById('res-material-generico').innerHTML = `
-        0000000<br>
-        <strong>Material: ${nombreMaterial}</strong><br>
-        Formula: (((${ancho} + ${margen}) * (${alto} + ${margen})) / 144) * ${costoPie} * ${cant}<br>
-        Medida con margen: ${anchoConMargen.toFixed(2)}" x ${altoConMargen.toFixed(2)}"<br>
-        Area total: ${pieCuadradoTotal.toFixed(2)} pie2<br>
-        Costo por pie2: RD$ ${costoPie}<br>
-        Costo minimo: RD$ ${costoMinimo}<br>
-        Total sin redondear: RD$ ${totalSinRedondear.toFixed(2)}<br>
-        Total aplicado: RD$ ${totalConMinimo.toFixed(2)}<br>
-        <span class="res-total">Total: RD$ ${total}</span>
+        <div class="result-header">
+            <div>
+                <strong>Total:</strong>
+                <span class="res-total">${formatCurrency(total)}</span>
+            </div>
+            <div class="result-subtitle">${nombreMaterial}</div>
+        </div>
+        <div class="result-details">
+            <div><strong>Costo pie2:</strong> ${formatCurrency(costoPie)}</div>
+            <div><strong>Mínimo:</strong> ${formatCurrency(costoMinimo)}</div>
+            <div><strong>Área:</strong> ${formatNumber(pieCuadradoTotal, 2)} pie2</div>
+            <div><strong>Medida:</strong> ${formatNumber(anchoConMargen, 2)}" x ${formatNumber(altoConMargen, 2)}"</div>
+            <div><strong>Fórmula:</strong> ((L + M) x (A + M)) / 144 x C x Q</div>
+        </div>
     `;
 }
 
@@ -705,11 +729,15 @@ function calcularDTF() {
     }
 
     document.getElementById('res-dtf').innerHTML = `
-        0000000<br>
-        <strong>Producto: DTF Textil</strong><br>
-        Medidas: ${ancho}" x ${alto}" | Cantidad: ${cantidad}<br>
-        Area calculada: ${areaTotal.toFixed(2)}<br>
-        <span class="res-total">Total: RD$ ${resultadoCal}</span>
+        <div class="result-header">
+            <div><strong>Total:</strong> <span class="res-total">${formatCurrency(resultadoCal)}</span></div>
+            <div class="result-subtitle">DTF Textil</div>
+        </div>
+        <div class="result-details">
+            <div><strong>Medidas:</strong> ${formatNumber(ancho, 2)}" x ${formatNumber(alto, 2)}"</div>
+            <div><strong>Cantidad:</strong> ${formatNumber(cantidad, 0)}</div>
+            <div><strong>Área:</strong> ${formatNumber(areaTotal, 2)} pie2</div>
+        </div>
     `;
 }
 
@@ -727,7 +755,15 @@ function calcularLapiceros() {
     else if (cant <= 1000) total = cant * 10;
     else total = cant * 9;
 
-    document.getElementById('res-lap').innerHTML = `0000000<br>Producto: Impresion de Lapiceros<br>Cantidad: ${cant} uds<br><span class="res-total">Total: RD$ ${redondear5(total)}</span>`;
+    document.getElementById('res-lap').innerHTML = `
+        <div class="result-header">
+            <div><strong>Total:</strong> <span class="res-total">${formatCurrency(redondear5(total))}</span></div>
+            <div class="result-subtitle">Impresion de Lapiceros</div>
+        </div>
+        <div class="result-details">
+            <div><strong>Cantidad:</strong> ${formatNumber(cant, 0)} uds</div>
+        </div>
+    `;
 }
 
 // 3. CALCULO CALANDRA
@@ -754,11 +790,15 @@ function calcularCalandra() {
     }
 
     document.getElementById('res-calandra').innerHTML = `
-        0000000<br>
-        <strong>Producto: Calandra</strong><br>
-        Medidas: ${ancho}" x ${alto}" | Cantidad: ${cantidad}<br>
-        Area calculada: ${areaTotal.toFixed(2)}<br>
-        <span class="res-total">Total: RD$ ${resultadoCal}</span>
+        <div class="result-header">
+            <div><strong>Total:</strong> <span class="res-total">${formatCurrency(resultadoCal)}</span></div>
+            <div class="result-subtitle">Calandra</div>
+        </div>
+        <div class="result-details">
+            <div><strong>Medidas:</strong> ${formatNumber(ancho, 2)}" x ${formatNumber(alto, 2)}"</div>
+            <div><strong>Cantidad:</strong> ${formatNumber(cantidad, 0)}</div>
+            <div><strong>Área:</strong> ${formatNumber(areaTotal, 2)} pie2</div>
+        </div>
     `;
 }
 
@@ -812,12 +852,15 @@ function calcularCorte() {
 
     let final = redondear5(costoCorte + costoMaterial);
     document.getElementById('res-corte').innerHTML = `
-        0000000<br>
-        <strong>Material: ${material.nombre}</strong><br>
-        Area total: ${pieCuadradoTotal.toFixed(2)} pie2<br>
-        Material: RD$ ${redondear5(costoMaterial)}<br>
-        Corte: RD$ ${redondear5(costoCorte)} (${minutosCorte.toFixed(2)} min)<br>
-        <span class="res-total">Total: RD$ ${final}</span>
+        <div class="result-header">
+            <div><strong>Total:</strong> <span class="res-total">${formatCurrency(final)}</span></div>
+            <div class="result-subtitle">${material.nombre}</div>
+        </div>
+        <div class="result-details">
+            <div><strong>Área:</strong> ${formatNumber(pieCuadradoTotal, 2)} pie2</div>
+            <div><strong>Material:</strong> ${formatCurrency(redondear5(costoMaterial))}</div>
+            <div><strong>Corte:</strong> ${formatCurrency(redondear5(costoCorte))}</div>
+        </div>
     `;
 }
 
@@ -847,11 +890,15 @@ function calcularUVPersonalizado() {
     }
 
     document.getElementById('res-uv-custom').innerHTML = `
-        0000000<br>
-        <strong>Cotizacion UV-DTF (Rigidos)</strong><br>
-        Medidas: ${ancho}" x ${alto}" | Cantidad: ${cantidad}<br>
-        Area calculada: ${areaTotal.toFixed(2)}<br>
-        <span class="res-total">Total estimado: RD$ ${resultadoCal}</span>
+        <div class="result-header">
+            <div><strong>Total estimado:</strong> <span class="res-total">${formatCurrency(resultadoCal)}</span></div>
+            <div class="result-subtitle">UV-DTF (Rigidos)</div>
+        </div>
+        <div class="result-details">
+            <div><strong>Medidas:</strong> ${formatNumber(ancho, 2)}" x ${formatNumber(alto, 2)}"</div>
+            <div><strong>Cantidad:</strong> ${formatNumber(cantidad, 0)}</div>
+            <div><strong>Área:</strong> ${formatNumber(areaTotal, 2)} pie2</div>
+        </div>
     `;
 }
 
@@ -926,13 +973,15 @@ function calcularUVDirecto() {
 
     const tipoText = ancho <= 8.5 && alto <= 11 ? "Pieza Pequeña" : "Pieza Grande (" + tipoGrande + ")";
     document.getElementById('res-uv-directo').innerHTML = `
-        0000000<br>
-        <strong>UV Directo Cama Plana</strong><br>
-        Medidas: ${ancho.toFixed(2)}" x ${alto.toFixed(2)}" | Cantidad: ${cantidad}<br>
-        Tipo: ${tipoText}<br>
-        Doble cara: ${dobleCara ? 'Sí' : 'No'}<br>
-        Precio unitario: RD$ ${precioUnitario ? precioUnitario.toFixed(2) : 'Calculado'}<br>
-        <span class="res-total">Total: RD$ ${total.toFixed(2)}</span>
+        <div class="result-header">
+            <div><strong>Total:</strong> <span class="res-total">${formatCurrency(total)}</span></div>
+            <div class="result-subtitle">UV Directo Cama Plana</div>
+        </div>
+        <div class="result-details">
+            <div><strong>Medidas:</strong> ${formatNumber(ancho, 2)}" x ${formatNumber(alto, 2)}"</div>
+            <div><strong>Tipo:</strong> ${tipoText}</div>
+            <div><strong>Doble cara:</strong> ${dobleCara ? 'Sí' : 'No'}</div>
+        </div>
     `;
 }
 
@@ -958,12 +1007,15 @@ function calcularSublimacion() {
     total = redondear5(total);
 
     document.getElementById('res-sublimacion').innerHTML = `
-        0000000<br>
-        <strong>Producto: Sublimación (Impresión)</strong><br>
-        Medidas: ${ancho}" x ${largo}" | Cantidad: ${cantidad}<br>
-        Yardas calculadas: ${yardas.toFixed(2)}<br>
-        Precio por yarda: RD$ 280<br>
-        Precio mínimo: RD$ 75<br>
-        <span class="res-total">Total: RD$ ${total}</span>
+        <div class="result-header">
+            <div><strong>Total:</strong> <span class="res-total">${formatCurrency(total)}</span></div>
+            <div class="result-subtitle">Sublimación (Impresión)</div>
+        </div>
+        <div class="result-details">
+            <div><strong>Medidas:</strong> ${formatNumber(ancho, 2)}" x ${formatNumber(largo, 2)}"</div>
+            <div><strong>Cantidad:</strong> ${formatNumber(cantidad, 0)}</div>
+            <div><strong>Precio yarda:</strong> ${formatCurrency(280)}</div>
+            <div><strong>Mínimo:</strong> ${formatCurrency(75)}</div>
+        </div>
     `;
 }

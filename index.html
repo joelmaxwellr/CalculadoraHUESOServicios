@@ -34,100 +34,136 @@
 
         <!-- DTF TEXTIL -->
         <section id="dtf" class="tab-content active">
-            <h2>Cotizacion DTF Textil (Cod. 375375)</h2>
-            <div class="input-group">
-                <label>Largo (Pulgadas):</label>
-                <input type="number" id="dtf-largo" placeholder="Ej: 24" onkeypress="if(event.key==='Enter') calcularDTF()">
-                <label>Ancho (Pulgadas - Max 22"):</label>
-                <input type="number" id="dtf-ancho" value="22" onkeypress="if(event.key==='Enter') calcularDTF()">
-                <label>Cantidad:</label>
-                <input type="number" id="dtf-cant" value="1" onkeypress="if(event.key==='Enter') calcularDTF()">
+            <h2>Cotizacion DTF Textil</h2>
+            <div class="calculator-layout">
+                <div class="calculator-main">
+                    <div class="input-group">
+                        <label>Largo (Pulgadas):</label>
+                        <input type="number" id="dtf-largo" placeholder="Ej: 24" onkeypress="if(event.key==='Enter') calcularDTF()">
+                        <label>Ancho (Pulgadas - Max 22"):</label>
+                        <input type="number" id="dtf-ancho" value="22" onkeypress="if(event.key==='Enter') calcularDTF()">
+                        <label>Cantidad:</label>
+                        <input type="number" id="dtf-cant" value="1" onkeypress="if(event.key==='Enter') calcularDTF()">
+                    </div>
+                    <button onclick="calcularDTF()">Calcular DTF</button>
+                </div>
+                <aside class="calculator-sidebar">
+                    <div id="res-dtf" class="result side-result"></div>
+                </aside>
             </div>
-            <button onclick="calcularDTF()">Calcular DTF</button>
-            <div id="res-dtf" class="result"></div>
         </section>
 
         <!-- LAPICEROS -->
         <section id="lapiceros" class="tab-content">
             <h2>Impresion de Lapiceros / Boligrafos</h2>
-            <div class="input-group">
-                <label>Cantidad de Unidades:</label>
-                <input type="number" id="lap-cant" placeholder="Ej: 150" onkeypress="if(event.key==='Enter') calcularLapiceros()">
+            <div class="calculator-layout">
+                <div class="calculator-main">
+                    <div class="input-group">
+                        <label>Cantidad de Unidades:</label>
+                        <input type="number" id="lap-cant" placeholder="Ej: 150" onkeypress="if(event.key==='Enter') calcularLapiceros()">
+                    </div>
+                    <button onclick="calcularLapiceros()">Calcular Lapiceros</button>
+                </div>
+                <aside class="calculator-sidebar">
+                    <div id="res-lap" class="result side-result"></div>
+                </aside>
             </div>
-            <button onclick="calcularLapiceros()">Calcular Lapiceros</button>
-            <div id="res-lap" class="result"></div>
         </section>
 
         <!-- CALANDRA -->
         <section id="calandra" class="tab-content">
             <h2>Cotizacion Calandra</h2>
-            <div class="input-group">
-                <label>Ancho (Pulgadas):</label>
-                <input type="number" id="calandra-ancho" placeholder="Ej: 24" step="0.01" onkeypress="if(event.key==='Enter') calcularCalandra()">
-                <label>Alto (Pulgadas):</label>
-                <input type="number" id="calandra-alto" placeholder="Ej: 36" step="0.01" onkeypress="if(event.key==='Enter') calcularCalandra()">
-                <label>Cantidad:</label>
-                <input type="number" id="calandra-cant" value="1" onkeypress="if(event.key==='Enter') calcularCalandra()">
+            <div class="calculator-layout">
+                <div class="calculator-main">
+                    <div class="input-group">
+                        <label>Ancho (Pulgadas):</label>
+                        <input type="number" id="calandra-ancho" placeholder="Ej: 24" step="0.01" onkeypress="if(event.key==='Enter') calcularCalandra()">
+                        <label>Alto (Pulgadas):</label>
+                        <input type="number" id="calandra-alto" placeholder="Ej: 36" step="0.01" onkeypress="if(event.key==='Enter') calcularCalandra()">
+                        <label>Cantidad:</label>
+                        <input type="number" id="calandra-cant" value="1" onkeypress="if(event.key==='Enter') calcularCalandra()">
+                    </div>
+                    <button onclick="calcularCalandra()">Calcular Calandra</button>
+                </div>
+                <aside class="calculator-sidebar">
+                    <div id="res-calandra" class="result side-result"></div>
+                </aside>
             </div>
-            <button onclick="calcularCalandra()">Calcular Calandra</button>
-            <div id="res-calandra" class="result"></div>
         </section>
 
         <!-- UV-DTF PERSONALIZADO -->
         <section id="uvdtf" class="tab-content">
             <h2>Cotizacion UV-DTF Personalizada</h2>
-            <div class="input-group">
-                <label>Ancho de la pieza (Pulgadas):</label>
-                <input type="number" id="uv-ancho" placeholder="Ej: 5" onkeypress="if(event.key==='Enter') calcularUVPersonalizado()">
-                
-                <label>Alto de la pieza (Pulgadas):</label>
-                <input type="number" id="uv-alto" placeholder="Ej: 3" onkeypress="if(event.key==='Enter') calcularUVPersonalizado()">
-                
-                <label>Cantidad de piezas:</label>
-                <input type="number" id="uv-cant" value="1" onkeypress="if(event.key==='Enter') calcularUVPersonalizado()">
+            <div class="calculator-layout">
+                <div class="calculator-main">
+                    <div class="input-group">
+                        <label>Ancho de la pieza (Pulgadas):</label>
+                        <input type="number" id="uv-ancho" placeholder="Ej: 5" onkeypress="if(event.key==='Enter') calcularUVPersonalizado()">
+                        
+                        <label>Alto de la pieza (Pulgadas):</label>
+                        <input type="number" id="uv-alto" placeholder="Ej: 3" onkeypress="if(event.key==='Enter') calcularUVPersonalizado()">
+                        
+                        <label>Cantidad de piezas:</label>
+                        <input type="number" id="uv-cant" value="1" onkeypress="if(event.key==='Enter') calcularUVPersonalizado()">
+                    </div>
+                    <button onclick="calcularUVPersonalizado()">Calcular UV-DTF</button>
+                </div>
+                <aside class="calculator-sidebar">
+                    <div id="res-uv-custom" class="result side-result"></div>
+                </aside>
             </div>
-            <button onclick="calcularUVPersonalizado()">Calcular UV-DTF</button>
-            <div id="res-uv-custom" class="result"></div>
         </section>
 
         <!-- UV DIRECTO CAMA PLANA -->
         <section id="uv-directo" class="tab-content">
             <h2>Cotizacion UV Directo Cama Plana</h2>
-            <div class="input-group">
-                <label>Ancho (Pulgadas):</label>
-                <input type="number" id="uv-directo-ancho" placeholder="Ej: 8" step="0.01" onkeypress="if(event.key==='Enter') calcularUVDirecto()">
-                
-                <label>Alto (Pulgadas):</label>
-                <input type="number" id="uv-directo-alto" placeholder="Ej: 11" step="0.01" onkeypress="if(event.key==='Enter') calcularUVDirecto()">
-                
-                <label>Cantidad:</label>
-                <input type="number" id="uv-directo-cant" value="1" onkeypress="if(event.key==='Enter') calcularUVDirecto()">
-                
-                <label>Doble cara:</label>
-                <input type="checkbox" id="uv-directo-doble-cara">
-                
-                <label>Tipo (Piezas grandes):</label>
-                <select id="uv-directo-tipo">
-                    <option value="blanco">Blanco</option>
-                    <option value="cmyk">CMYK</option>
-                    <option value="sintra">Sintra</option>
-                </select>
+            <div class="calculator-layout">
+                <div class="calculator-main">
+                    <div class="input-group">
+                        <label>Ancho (Pulgadas):</label>
+                        <input type="number" id="uv-directo-ancho" placeholder="Ej: 8" step="0.01" onkeypress="if(event.key==='Enter') calcularUVDirecto()">
+                        
+                        <label>Alto (Pulgadas):</label>
+                        <input type="number" id="uv-directo-alto" placeholder="Ej: 11" step="0.01" onkeypress="if(event.key==='Enter') calcularUVDirecto()">
+                        
+                        <label>Cantidad:</label>
+                        <input type="number" id="uv-directo-cant" value="1" onkeypress="if(event.key==='Enter') calcularUVDirecto()">
+                        
+                        <label>Doble cara:</label>
+                        <input type="checkbox" id="uv-directo-doble-cara">
+                        
+                        <label>Tipo (Piezas grandes):</label>
+                        <select id="uv-directo-tipo">
+                            <option value="blanco">Blanco</option>
+                            <option value="cmyk">CMYK</option>
+                            <option value="sintra">Sintra</option>
+                        </select>
+                    </div>
+                    <button onclick="calcularUVDirecto()">Calcular UV Directo</button>
+                </div>
+                <aside class="calculator-sidebar">
+                    <div id="res-uv-directo" class="result side-result"></div>
+                </aside>
             </div>
-            <button onclick="calcularUVDirecto()">Calcular UV Directo</button>
-            <div id="res-uv-directo" class="result"></div>
         </section>
 
         <!-- SUBLIMACIÓN -->
         <section id="sublimacion" class="tab-content">
             <h2>Cotizacion Sublimación (Impresión)</h2>
-            <div class="input-group">
-                <label>Largo (Pulgadas):</label>
-                <input type="number" id="sublimacion-largo" placeholder="Ej: 36" onkeypress="if(event.key==='Enter') calcularSublimacion()">
-                <label>Cantidad:</label>
-                <input type="number" id="sublimacion-cant" value="1" onkeypress="if(event.key==='Enter') calcularSublimacion()">
+            <div class="calculator-layout">
+                <div class="calculator-main">
+                    <div class="input-group">
+                        <label>Largo (Pulgadas):</label>
+                        <input type="number" id="sublimacion-largo" placeholder="Ej: 36" onkeypress="if(event.key==='Enter') calcularSublimacion()">
+                        <label>Cantidad:</label>
+                        <input type="number" id="sublimacion-cant" value="1" onkeypress="if(event.key==='Enter') calcularSublimacion()">
+                    </div>
+                    <button onclick="calcularSublimacion()">Calcular Sublimación</button>
+                </div>
+                <aside class="calculator-sidebar">
+                    <div id="res-sublimacion" class="result side-result"></div>
+                </aside>
             </div>
-            <button onclick="calcularSublimacion()">Calcular Sublimación</button>
-            <div id="res-sublimacion" class="result"></div>
         </section>
 
         <!-- MATERIAL POR PIE CUADRADO -->
@@ -138,10 +174,16 @@
                     <div class="input-group">
                         <label>Nombre del material:</label>
                         <input type="text" id="material-seleccionado-nombre" placeholder="Ej: Foamboard 5mm" onchange="actualizarMaterialGeneralSeleccionado()">
-                        <label>Costo por pie cuadrado (RD$):</label>
-                        <input type="number" id="material-seleccionado-costo" step="0.01" readonly>
-                        <label>Costo minimo (RD$):</label>
-                        <input type="number" id="material-seleccionado-minimo" step="0.01" value="0" readonly>
+                        <div class="info-row compact">
+                            <span class="info-label">Costo pie2 (RD$):</span>
+                            <span id="material-seleccionado-costo-text" class="info-value">N/A</span>
+                        </div>
+                        <input type="hidden" id="material-seleccionado-costo" value="">
+                        <div class="info-row compact">
+                            <span class="info-label">Mínimo (RD$):</span>
+                            <span id="material-seleccionado-minimo-text" class="info-value">N/A</span>
+                        </div>
+                        <input type="hidden" id="material-seleccionado-minimo" value="0">
                         <label>Ancho de la pieza (Pulgadas):</label>
                         <input type="number" id="material-ancho" placeholder="Ej: 12" step="0.01" onkeypress="if(event.key==='Enter') calcularMaterialGeneral()">
                         <label>Alto de la pieza (Pulgadas):</label>
@@ -215,28 +257,34 @@
                     <button type="button" class="secondary-btn" onclick="guardarMaterialCorte()">Agregar / Actualizar Material</button>
                 </div>
             </div>
-            <div class="input-group">
-                <label>Material:</label>
-                <div class="autocomplete-wrapper">
-                    <input type="text" id="corte-material-buscar" placeholder="Buscar material de corte..." oninput="filtrarSelect('corte-material', this.value, 'corte-suggestions', this.value)" onchange="seleccionarOpcionSelectPorTexto('corte-material', this.value)">
-                    <div id="corte-suggestions" class="autocomplete-suggestions"></div>
+            <div class="calculator-layout">
+                <div class="calculator-main">
+                    <div class="input-group">
+                        <label>Material:</label>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="corte-material-buscar" placeholder="Buscar material de corte..." oninput="filtrarSelect('corte-material', this.value, 'corte-suggestions', this.value)" onchange="seleccionarOpcionSelectPorTexto('corte-material', this.value)">
+                            <div id="corte-suggestions" class="autocomplete-suggestions"></div>
+                        </div>
+                        <select id="corte-material" onchange="mostrarCostoMaterialSeleccionado()"></select>
+                        <label>Costo del material seleccionado (RD$ / pie2):</label>
+                        <input type="number" id="corte-costo-pie" step="0.01" onchange="actualizarCostoMaterialSeleccionado()">
+                        <label>Grosor (mm):</label>
+                        <input type="number" id="corte-grosor" value="3" step="0.1" onkeypress="if(event.key==='Enter') calcularCorte()">
+                        <label>Ancho Pieza (Pulg):</label>
+                        <input type="number" id="corte-ancho" placeholder="Ej: 2.5" onkeypress="if(event.key==='Enter') calcularCorte()">
+                        <label>Alto Pieza (Pulg):</label>
+                        <input type="number" id="corte-alto" placeholder="Ej: 5" onkeypress="if(event.key==='Enter') calcularCorte()">
+                        <label>Cantidad de Piezas:</label>
+                        <input type="number" id="corte-cant" value="1" onkeypress="if(event.key==='Enter') calcularCorte()">
+                        <label>Agujeros por pieza:</label>
+                        <input type="number" id="corte-agujeros" value="0" onkeypress="if(event.key==='Enter') calcularCorte()">
+                    </div>
+                    <button onclick="calcularCorte()">Calcular Costo de Corte</button>
                 </div>
-                <select id="corte-material" onchange="mostrarCostoMaterialSeleccionado()"></select>
-                <label>Costo del material seleccionado (RD$ / pie2):</label>
-                <input type="number" id="corte-costo-pie" step="0.01" onchange="actualizarCostoMaterialSeleccionado()">
-                <label>Grosor (mm):</label>
-                <input type="number" id="corte-grosor" value="3" step="0.1" onkeypress="if(event.key==='Enter') calcularCorte()">
-                <label>Ancho Pieza (Pulg):</label>
-                <input type="number" id="corte-ancho" placeholder="Ej: 2.5" onkeypress="if(event.key==='Enter') calcularCorte()">
-                <label>Alto Pieza (Pulg):</label>
-                <input type="number" id="corte-alto" placeholder="Ej: 5" onkeypress="if(event.key==='Enter') calcularCorte()">
-                <label>Cantidad de Piezas:</label>
-                <input type="number" id="corte-cant" value="1" onkeypress="if(event.key==='Enter') calcularCorte()">
-                <label>Agujeros por pieza:</label>
-                <input type="number" id="corte-agujeros" value="0" onkeypress="if(event.key==='Enter') calcularCorte()">
+                <aside class="calculator-sidebar">
+                    <div id="res-corte" class="result side-result"></div>
+                </aside>
             </div>
-            <button onclick="calcularCorte()">Calcular Costo de Corte</button>
-            <div id="res-corte" class="result"></div>
         </section>
 
         <footer>
