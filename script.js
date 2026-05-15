@@ -169,10 +169,14 @@ function normalizarIdMaterial(nombre) {
     return nombre.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-function verificarCodigoGeneralMaterial() {
+function esCodigoGeneralMaterialValido() {
     const codigoInput = document.getElementById('material-codigo-verificacion');
     const codigo = codigoInput ? codigoInput.value.trim() : '';
-    if (codigo === '2397') return true;
+    return codigo === '2397';
+}
+
+function verificarCodigoGeneralMaterial() {
+    if (esCodigoGeneralMaterialValido()) return true;
     alert('Código de verificación incorrecto. No se puede crear o editar materiales generales.');
     return false;
 }
@@ -183,6 +187,12 @@ function verificarCodigoCorteMaterial() {
     if (codigo === '2397') return true;
     alert('Código de verificación incorrecto. No se puede crear o editar materiales de corte.');
     return false;
+}
+
+function actualizarEstadoBotonesEliminarMateriales() {
+    const buttons = document.querySelectorAll('#materiales-config-body .table-btn.danger');
+    const activo = esCodigoGeneralMaterialValido();
+    buttons.forEach(btn => btn.disabled = !activo);
 }
 
 function obtenerMaterialesGenerales() {
@@ -339,7 +349,16 @@ function renderizarTablaMateriales(materiales) {
         guardarBtn.textContent = 'Guardar';
         guardarBtn.onclick = () => guardarMaterialGeneralDesdeTabla(material.id);
 
-        acciones.append(usarBtn, guardarBtn);
+        const eliminarBtn = document.createElement('button');
+        eliminarBtn.type = 'button';
+        eliminarBtn.className = 'table-btn danger';
+        eliminarBtn.title = 'Eliminar material';
+        eliminarBtn.setAttribute('aria-label', 'Eliminar material');
+        eliminarBtn.innerHTML = '🗑';
+        eliminarBtn.disabled = !esCodigoGeneralMaterialValido();
+        eliminarBtn.onclick = () => eliminarMaterialGeneral(material.id);
+
+        acciones.append(usarBtn, guardarBtn, eliminarBtn);
         [nombreInput, costoInput, minimoInput, acciones].forEach(elemento => {
             const cell = document.createElement('td');
             cell.appendChild(elemento);
@@ -444,6 +463,28 @@ function guardarMaterialGeneralData(idEditando, nombreValor, costoValor, minimoV
     cargarMaterialesGenerales();
     openTab(`material:${id}`);
     return true;
+}
+
+async function eliminarMaterialGeneral(id) {
+    if (!id) return;
+    if (!confirm('¿Eliminar este material? Esta acción no se puede deshacer.')) return;
+    if (!verificarCodigoGeneralMaterial()) return;
+
+    const materiales = obtenerMaterialesGenerales();
+    const restante = materiales.filter(m => m.id !== id);
+    guardarMaterialesGenerales(restante);
+
+    // Si hay una función remota para eliminar en Firebase, intentarla
+    try {
+        if (window.firebaseDeleteMaterial && typeof window.firebaseDeleteMaterial === 'function') {
+            await window.firebaseDeleteMaterial('generales', id);
+        }
+    } catch (err) {
+        console.error('Error eliminando material en Firebase:', err);
+        setFirebaseStatus('Error eliminando material en Firebase.');
+    }
+
+    cargarMaterialesGenerales();
 }
 
 function cargarMaterialGeneralParaEditar(actualizarCalculadora = true) {
@@ -649,6 +690,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     await sincronizarMaterialesFirebase();
     cargarMaterialesGenerales();
     cargarMaterialesCorte();
+
+    const codigoInput = document.getElementById('material-codigo-verificacion');
+    if (codigoInput) {
+        codigoInput.addEventListener('input', actualizarEstadoBotonesEliminarMateriales);
+    }
 });
 
 function calcularMaterialGeneral() {
